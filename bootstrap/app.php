@@ -13,10 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Pengecualian CSRF untuk Webhook Midtrans (Laravel 11 & 12 Terbaru)
-        // $middleware->validateTokens(except: [
-        //     'api/midtrans-webhook',
-        // ]);
+        // Arahkan user yang BELUM LOGIN (Unauthenticated) langsung ke /login
+        $middleware->redirectGuestsTo(fn(Request $request) => route('login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

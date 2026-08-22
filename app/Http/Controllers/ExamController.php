@@ -361,4 +361,22 @@ class ExamController extends Controller
 
         return "Saran AI: Pertahankan area kekuatan Anda dan alokasikan 70% waktu belajar harian untuk mengulas materi pada area kelemahan.";
     }
+
+    /**
+     * Leaderboard Peringkat Nasional
+     */
+    public function leaderboard(int $examId)
+    {
+        $exam = Exam::findOrFail($examId);
+
+        // Ambil semua hasil peserta yang sudah FINISHED dan urutkan berdasarkan Total Skor Tertinggi
+        $rankings = UserExam::with('user')
+            ->where('exam_id', $examId)
+            ->where('status', 'FINISHED')
+            ->orderBy('total_score', 'desc')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return view('exam.leaderboard', compact('exam', 'rankings'));
+    }
 }

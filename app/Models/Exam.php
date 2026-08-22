@@ -15,4 +15,12 @@ class Exam extends Model
     {
         return $this->hasMany(Question::class);
     }
+
+    /**
+     * Relasi ke Sesi Pengerjaan Peserta (UserExam)
+     */
+    public function userExams()
+    {
+        return $this->hasMany(UserExam::class);
+    }
 }
