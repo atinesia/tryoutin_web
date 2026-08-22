@@ -56,6 +56,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'reference'      => $tripayData['reference'],
                 'merchant_ref'   => $merchantRef,
+                'order_number'   => $merchantRef,
                 'user_id'        => $user->id,
                 'exam_id'        => $exam->id,
                 'payment_method' => $tripayData['payment_method'],
@@ -86,15 +87,24 @@ class OrderController extends Controller
      */
     public function webhook(Request $request)
     {
-        $privateKey = env('TRIPAY_PRIVATE_KEY');
+        // 1. Ambil Private Key dari Config / ENV
+        $privateKey = config('services.tripay.private_key') ?? env('TRIPAY_PRIVATE_KEY');
+
+        // 2. Ambil RAW Body Request (JSON Mentah)
         $json = $request->getContent();
 
-        // Verifikasi Signature Callback dari Tripay Server
+        // 3. Ambil Signature dari Header yang dikirim Tripay
         $callbackSignature = $request->header('X-Callback-Signature');
+
+        // 4. Hitung Ulang Signature HMAC SHA256
         $signature = hash_hmac('sha256', $json, $privateKey);
 
+        // 5. Validasi Ketepatan Signature
         if ($callbackSignature !== $signature) {
-            return response()->json(['success' => false, 'message' => 'Invalid Signature'], 403);
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Signature'
+            ], 403);
         }
 
         $event = $request->header('X-Callback-Event');
@@ -108,7 +118,7 @@ class OrderController extends Controller
                 if ($order && $order->status !== 'PAID') {
                     $order->update(['status' => 'PAID']);
 
-                    // Otomatis Buka Akses Sesi Ujian untuk Peserta
+                    // Otomatis Buka Akses Ujian
                     $existingUserExam = UserExam::where('user_id', $order->user_id)
                         ->where('exam_id', $order->exam_id)
                         ->first();

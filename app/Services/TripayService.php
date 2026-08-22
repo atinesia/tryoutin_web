@@ -44,13 +44,17 @@ class TripayService
      */
     public function createClosedTransaction($merchantRef, $paymentMethod, $amount, $user, $exam)
     {
-        // Hitung Signature SHA256 Tripay
-        $signature = hash_hmac('sha256', $this->merchantCode . $merchantRef . $amount, $this->privateKey);
+        // Konversi Amount ke Integer murni tanpa koma/desimal
+        $amountInt = (int) $amount;
+
+        // Rumus Signature Buat Transaksi Tripay
+        $signatureString = $this->merchantCode . $merchantRef . $amountInt;
+        $signature = hash_hmac('sha256', $signatureString, $this->privateKey);
 
         $payload = [
             'method'         => $paymentMethod,
             'merchant_ref'   => $merchantRef,
-            'amount'         => (int) $amount,
+            'amount'         => $amountInt,
             'customer_name'  => $user->name,
             'customer_email' => $user->email,
             'customer_phone' => '081234567890',
@@ -58,12 +62,12 @@ class TripayService
                 [
                     'sku'      => 'EXAM-' . $exam->id,
                     'name'     => substr($exam->title, 0, 50),
-                    'price'    => (int) $amount,
+                    'price'    => $amountInt,
                     'quantity' => 1,
                 ]
             ],
             'return_url'     => route('exam.show', $exam->id),
-            'expired_time'   => (time() + (24 * 60 * 60)), // Expired 24 Jam
+            'expired_time'   => (time() + (24 * 60 * 60)), // Expired 24 jam
             'signature'      => $signature
         ];
 

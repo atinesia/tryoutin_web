@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminExamController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\OrderController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 
@@ -33,9 +34,20 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/exam/save-answer', [ExamController::class, 'saveAnswer']);
     Route::get('/exam/{id}/finish', [ExamController::class, 'finish'])->name('exam.finish');
     Route::get('/exam/{id}/result', [ExamController::class, 'result'])->name('exam.result');
-
-    Route::get('/admin/exams/create', [AdminExamController::class, 'create'])->name('admin.exams.create');
-    Route::post('/admin/exams', [AdminExamController::class, 'store'])->name('admin.exams.store');
-
+    // Rute Pembayaran Tripay
     Route::get('/checkout/{examId}', [OrderController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/{examId}', [OrderController::class, 'store'])->name('checkout.store'); // <-- Pastikan ->name('checkout.store') ada di sini
+    Route::get('/order/{reference}', [OrderController::class, 'detail'])->name('order.detail');
+
+    // Route::get('/admin/exams/create', [AdminExamController::class, 'create'])->name('admin.exams.create');
+    // Route::post('/admin/exams', [AdminExamController::class, 'store'])->name('admin.exams.store');
+    // 3. RUTE KHUSUS ADMIN (Dilindungi AdminMiddleware)
+    Route::middleware(AdminMiddleware::class)->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        Route::get('/exams/create', [AdminExamController::class, 'create'])->name('exams.create');
+        Route::post('/exams', [AdminExamController::class, 'store'])->name('exams.store');
+    });
 });
