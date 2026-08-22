@@ -6,7 +6,9 @@ use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\TutorMiddleware;
 use App\Models\Exam;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -30,10 +32,7 @@ Route::middleware('guest')->group(function () {
 });
 // 3. User / Siswa Protected Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        $purchasedExams = Exam::with('userExams')->get();
-        return view('dashboard', compact('purchasedExams'));
-    })->name('dashboard');
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
 
     // Exam Engine
     Route::get('/exam/{examId}', [ExamController::class, 'show'])->name('exam.show');
@@ -72,8 +71,15 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admi
     // Tickets Management
     Route::get('/tickets', [AdminController::class, 'ticketsIndex'])->name('tickets.index');
     Route::post('/tickets/{id}/status', [AdminController::class, 'ticketUpdateStatus'])->name('tickets.updateStatus');
+});
 
-    // AI Question Generator (Accessible by Admin & Tutor)
+Route::middleware(['auth', TutorMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
+    // Halaman Utama Tutor & Admin (Daftar Paket)
+    Route::get('/exams', [AdminExamController::class, 'index'])->name('exams.index');
     Route::get('/exams/create', [AdminExamController::class, 'create'])->name('exams.create');
     Route::post('/exams', [AdminExamController::class, 'store'])->name('exams.store');
+
+    Route::get('/exams/{examId}/questions', [AdminExamController::class, 'questionsIndex'])->name('exams.questions');
+    Route::get('/exams/{examId}/questions/{questionId}/edit', [AdminExamController::class, 'questionEdit'])->name('exams.questions.edit');
+    Route::put('/exams/{examId}/questions/{questionId}', [AdminExamController::class, 'questionUpdate'])->name('exams.questions.update');
 });

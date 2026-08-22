@@ -27,11 +27,17 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            // Redirect berdasarkan Role
-            if ($user->isAdmin() || $user->role === 'tutor') {
+            // 1. Super Admin -> Ke Dashboard
+            if ($user->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
             }
 
+            // 2. Tutor -> Langsung ke Form Generator / Kelola Soal (TIDAK BISA KE DASHBOARD)
+            if ($user->role === 'tutor') {
+                return redirect()->intended(route('admin.exams.index'));
+            }
+
+            // 3. Afiliator -> Ke Dashboard Afiliator
             if ($user->role === 'affiliate') {
                 return redirect()->intended(route('affiliate.dashboard'));
             }

@@ -72,21 +72,29 @@
             <i class="fa-solid fa-graduation-cap text-info me-2"></i>Tryout<span class="text-info">in</span>
         </div>
         <div class="py-3">
-            <a href="{{ route('admin.dashboard') }}"
-                class="nav-link-admin {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <i class="fa-solid fa-chart-pie me-3"></i> Dashboard
-            </a>
-            <a href="{{ route('admin.users.index') }}"
-                class="nav-link-admin {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-users me-3"></i> Kelola User
+            <!-- Menu Dashboard, User, & Tiket HANYA MUNCUL UNTUK SUPER ADMIN -->
+            @if (auth()->user()->isAdmin())
+                <a href="{{ route('admin.dashboard') }}"
+                    class="nav-link-admin {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chart-pie me-3"></i> Dashboard
+                </a>
+                <a href="{{ route('admin.users.index') }}"
+                    class="nav-link-admin {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-users me-3"></i> Kelola User
+                </a>
+                <a href="{{ route('admin.tickets.index') }}"
+                    class="nav-link-admin {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-headset me-3"></i> Tiket Kendala
+                </a>
+            @endif
+            <!-- Menu Khusus Paket Soal (Diakses Admin & Tutor) -->
+            <a href="{{ route('admin.exams.index') }}"
+                class="nav-link-admin {{ request()->routeIs('admin.exams.index') || request()->routeIs('admin.exams.questions*') ? 'active' : '' }}">
+                <i class="fa-solid fa-layer-group me-3"></i> Daftar Paket Soal
             </a>
             <a href="{{ route('admin.exams.create') }}"
                 class="nav-link-admin {{ request()->routeIs('admin.exams.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-wand-magic-sparkles me-3"></i> AI Question Generator
-            </a>
-            <a href="{{ route('admin.tickets.index') }}"
-                class="nav-link-admin {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-headset me-3"></i> Tiket Kendala
             </a>
         </div>
     </aside>

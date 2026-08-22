@@ -1,169 +1,124 @@
 @extends('layouts.admin')
 
-@section('title', 'AI Question Generator')
-@section('page_title', 'AI Question Generator (Groq Engine)')
-@push('styles')
-    <style>
-        body {
-            background-color: #f4f7fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+@section('title', 'AI Question Generator Specialist')
+@section('page_title', 'AI Question Generator (Assessment Specialist BKN)')
 
-        .card-custom {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .brand-header {
-            background: linear-gradient(135deg, #0f1f38 0%, #1b365d 100%);
-            color: #fff;
-        }
-    </style>
-@endpush
 @section('content')
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="card card-custom overflow-hidden">
-                    <div class="card-header brand-header p-4 border-0">
-                        <h3 class="fw-bold m-0"><i class="fa-solid fa-wand-magic-sparkles text-info me-2"></i>Buat Paket
-                            Tryout & AI Question Generator</h3>
-                        <p class="text-light opacity-75 small m-0 mt-1">Isi rincian paket dan tentukan jumlah soal. Groq
-                            AI akan secara otomatis memproduksi soal beserta kunci dan pembahasannya.</p>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card card-custom p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3">
+                        <i class="fa-solid fa-robot fs-3"></i>
                     </div>
-                    <div class="card-body p-4 p-md-5">
-
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="fa-solid fa-circle-exclamation me-2"></i>{{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
-
-                        <form action="{{ route('admin.exams.store') }}" method="POST" id="examForm">
-                            @csrf
-
-                            <!-- Section 1: Detail Paket -->
-                            <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-box-archive me-2"></i>1.
-                                Informasi & Tarif Paket</h5>
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-8">
-                                    <label class="form-label fw-semibold">Judul Paket Tryout</label>
-                                    <input type="text" name="title" class="form-control"
-                                        placeholder="Contoh: Tryout Akbar SKD CPNS 2026 - Paket Premium 1"
-                                        value="{{ old('title') }}" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">Harga Paket (Rp)</label>
-                                    <input type="number" name="price" class="form-control" placeholder="0 untuk GRATIS"
-                                        value="{{ old('price', 0) }}" required min="0">
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Deskripsi / Fasilitas Paket</label>
-                                    <textarea name="description" class="form-control" rows="2"
-                                        placeholder="Tuliskan fasilitas atau keterangan paket yang akan tampil di halaman catalog...">{{ old('description') }}</textarea>
-                                </div>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <!-- Section 2: Durasi & Passing Grade -->
-                            <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-clock me-2"></i>2. Waktu &
-                                Passing Grade</h5>
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-3">
-                                    <label class="form-label fw-semibold">Durasi (Menit)</label>
-                                    <input type="number" name="duration_minutes" class="form-control"
-                                        value="{{ old('duration_minutes', 100) }}" required min="1">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label fw-semibold">Passing Grade TWK</label>
-                                    <input type="number" name="passing_grade_twk" class="form-control"
-                                        value="{{ old('passing_grade_twk', 65) }}" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label fw-semibold">Passing Grade TIU</label>
-                                    <input type="number" name="passing_grade_tiu" class="form-control"
-                                        value="{{ old('passing_grade_tiu', 80) }}" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label fw-semibold">Passing Grade TKP</label>
-                                    <input type="number" name="passing_grade_tkp" class="form-control"
-                                        value="{{ old('passing_grade_tkp', 166) }}" required>
-                                </div>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <!-- Section 3: Konfigurasi Generator AI -->
-                            <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-robot me-2"></i>3. Generate Soal
-                                Otomatis (Groq AI)</h5>
-                            <p class="text-muted small mb-3">Tentukan jumlah soal yang akan diproduksi oleh AI secara
-                                presisi dan anti-halusinasi:</p>
-
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-4">
-                                    <div class="p-3 bg-light rounded-3 border">
-                                        <label class="form-label fw-bold text-dark">Jumlah Soal TWK</label>
-                                        <input type="number" name="count_twk"
-                                            class="form-control form-control-lg text-center fw-bold"
-                                            value="{{ old('count_twk', 5) }}" min="0" required>
-                                        <small class="text-muted d-block mt-1 fs-7">Nasionalisme, UUD 45,
-                                            Pancasila</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="p-3 bg-light rounded-3 border">
-                                        <label class="form-label fw-bold text-dark">Jumlah Soal TIU</label>
-                                        <input type="number" name="count_tiu"
-                                            class="form-control form-control-lg text-center fw-bold"
-                                            value="{{ old('count_tiu', 5) }}" min="0" required>
-                                        <small class="text-muted d-block mt-1 fs-7">Verbal, Numerik, Logika</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="p-3 bg-light rounded-3 border">
-                                        <label class="form-label fw-bold text-dark">Jumlah Soal TKP</label>
-                                        <input type="number" name="count_tkp"
-                                            class="form-control form-control-lg text-center fw-bold"
-                                            value="{{ old('count_tkp', 5) }}" min="0" required>
-                                        <small class="text-muted d-block mt-1 fs-7">Skala Skor 1 - 5 Per Opsi</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold">Petunjuk Tambahan / Topik Spesifik untuk AI
-                                    (Opsional)</label>
-                                <input type="text" name="topic_context" class="form-control"
-                                    placeholder="Contoh: Berikan penekanan pada materi Sejarah Perumusan Pancasila dan Deret Angka Kompleks"
-                                    value="{{ old('topic_context') }}">
-                            </div>
-
-                            <!-- Submit Button -->
-                            <div class="mt-4">
-                                <button type="submit"
-                                    class="btn btn-primary btn-lg w-100 fw-bold py-3 rounded-pill shadow-sm"
-                                    id="btnSubmit">
-                                    <i class="fa-solid fa-gears me-2"></i> Generate Paket & Buat Soal Otomatis
-                                </button>
-                            </div>
-                        </form>
+                    <div>
+                        <h5 class="fw-bold m-0">Senior Assessment Specialist Generator</h5>
+                        <small class="text-muted">Generate bank soal SKD CPNS & Kedinasan otomatis beserta kunci dan bobot
+                            skor resmi BKN</small>
                     </div>
                 </div>
+
+                <form action="{{ route('admin.exams.store') }}" method="POST">
+                    @csrf
+
+                    <!-- Detail Paket Exam -->
+                    <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-file-signature me-2"></i>Pengaturan Paket
+                        Ujian (Exam)</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-7">
+                            <label class="form-label fw-semibold">Judul Paket Ujian</label>
+                            <input type="text" name="title" class="form-control"
+                                placeholder="Contoh: Tryout Spesialis SKD CPNS 2026 - Paket 1" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Harga Paket (Rp)</label>
+                            <input type="number" name="price" class="form-control" value="50000" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Durasi (Menit)</label>
+                            <input type="number" name="duration_minutes" class="form-control" value="100" required>
+                        </div>
+                    </div>
+
+                    <!-- Detail Parameter Soal (Question) -->
+                    <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-list-check me-2"></i>Parameter Bank Soal
+                        (Questions)</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Jenis Soal (Category)</label>
+                            <select name="category" id="categorySelect" class="form-select" required>
+                                <option value="TWK">Tes Wawasan Kebangsaan (TWK)</option>
+                                <option value="TIU">Tes Intelegensia Umum (TIU)</option>
+                                <option value="TKP">Tes Karakteristik Pribadi (TKP)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Sub-Tes (Otomatis Sesuai Kategori)</label>
+                            <select name="sub_category" id="subCategorySelect" class="form-select" required>
+                                <!-- Otomatis Diisi via JS -->
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Tingkat Kesulitan (Difficulty)</label>
+                            <select name="difficulty" class="form-select" required>
+                                <option value="Sedang">Sedang (Standard BKN)</option>
+                                <option value="HOTS" selected>HOTS (High Order Thinking Skills)</option>
+                                <option value="Mudah">Mudah</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Jumlah Soal Di-generate</label>
+                            <input type="number" name="question_count" class="form-control" value="5" min="1"
+                                max="20" required>
+                            <small class="text-muted fs-7">*Rekomendasi 5-10 soal per sekali batch request AI</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Generate Soal, Pembahasan & Bobot Skor
+                    </button>
+                </form>
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-    <script>
-        document.getElementById('examForm').addEventListener('submit', function() {
-            let btn = document.getElementById('btnSubmit');
-            btn.disabled = true;
-            btn.innerHTML =
-                '<span class="spinner-border spinner-border-sm me-2"></span>Groq AI Sedang Membuat Soal (Mohon Tunggu)...';
-        });
-    </script>
-@endpush
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const categorySelect = document.getElementById('categorySelect');
+                const subCategorySelect = document.getElementById('subCategorySelect');
+
+                const subCategories = {
+                    'TWK': ['Nasionalisme', 'Integritas', 'Bela Negara', 'Pilar Negara', 'Bahasa Indonesia'],
+                    'TIU': ['Verbal (Analogi/Silogisme)', 'Numerik (Deret/Berhitung Cepat)', 'Penalaran Analitis',
+                        'Figural'
+                    ],
+                    'TKP': ['Pelayanan Publik', 'Jejaring Kerja', 'Sosial Budaya', 'TIK', 'Profesionalisme',
+                        'Anti-Radikalisme'
+                    ]
+                };
+
+                function updateSubCategories() {
+                    const selectedCategory = categorySelect.value;
+                    const options = subCategories[selectedCategory] || [];
+
+                    subCategorySelect.innerHTML = '';
+                    options.forEach(sub => {
+                        const opt = document.createElement('option');
+                        opt.value = sub;
+                        opt.textContent = sub;
+                        subCategorySelect.appendChild(opt);
+                    });
+                }
+
+                categorySelect.addEventListener('change', updateSubCategories);
+                updateSubCategories();
+            });
+        </script>
+    @endpush
+@endsection

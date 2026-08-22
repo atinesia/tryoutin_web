@@ -191,7 +191,7 @@
                 <div class="col-lg-5 text-center">
                     <div class="position-relative">
                         <img src="https://img.freepik.com/free-vector/online-test-concept-illustration_114360-5486.jpg"
-                            class="img-fluid rounded-4 shadow-lg border border-3 border-info" alt="Tryoutin CAT Engine"
+                            class="img-fluid rounded-4 shadow-lg border border-info" alt="Tryoutin CAT Engine"
                             style="max-height: 380px;">
                     </div>
                 </div>
@@ -275,7 +275,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-md-6 col-lg-4">
                     <div class="d-flex mb-4">
-                        <div class="icon-circle bg-primary text-white me-3 flex-shrink-0"><i
+                        <div class="icon-circle bg-primary text-white me-3 shrink-0"><i
                                 class="fa-solid fa-stopwatch"></i></div>
                         <div>
                             <h6 class="fw-bold mb-1">Timer Presisi Server-Side</h6>
@@ -284,7 +284,7 @@
                         </div>
                     </div>
                     <div class="d-flex mb-4">
-                        <div class="icon-circle bg-info text-white me-3 flex-shrink-0"><i
+                        <div class="icon-circle bg-info text-white me-3 shrink-0"><i
                                 class="fa-solid fa-robot"></i></div>
                         <div>
                             <h6 class="fw-bold mb-1">Evaluasi Otomatis AI Mentor</h6>
@@ -299,7 +299,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4">
                     <div class="d-flex mb-4">
-                        <div class="icon-circle bg-success text-white me-3 flex-shrink-0"><i
+                        <div class="icon-circle bg-success text-white me-3 shrink-0"><i
                                 class="fa-solid fa-trophy"></i></div>
                         <div>
                             <h6 class="fw-bold mb-1">Leaderboard & Ranking Nasional</h6>
@@ -308,7 +308,7 @@
                         </div>
                     </div>
                     <div class="d-flex mb-4">
-                        <div class="icon-circle bg-warning text-dark me-3 flex-shrink-0"><i
+                        <div class="icon-circle bg-warning text-dark me-3 shrink-0"><i
                                 class="fa-solid fa-book-open"></i></div>
                         <div>
                             <h6 class="fw-bold mb-1">Pembahasan & Kunci Jawaban</h6>
