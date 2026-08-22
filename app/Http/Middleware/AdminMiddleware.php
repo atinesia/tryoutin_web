@@ -16,14 +16,9 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // 1. Jika belum login sama sekali, arahkan ke halaman login
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
-        }
-
-        // 2. Jika sudah login tetapi bukan Admin/Tutor, lempar ke dashboard user
-        if (!Auth::user()->isAdmin() && Auth::user()->role !== 'tutor') {
-            return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki hak akses halaman Admin/Tutor.');
+        // Berikan izin jika user adalah Admin ATAU Tutor
+        if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->role === 'tutor')) {
+            return $next($request);
         }
 
         // 2. Jika bukan admin, tendang kembali ke katalog dengan pesan error

@@ -20,12 +20,14 @@ Route::get('/', function () {
 Route::get('/packages', [ExamController::class, 'index'])->name('exam.index');
 Route::post('/api/tripay-webhook', [OrderController::class, 'webhook']);
 
-// 2. Auth Routes
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+// 1. Guest Routes (Hanya untuk yang BELUM Login)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
 // 3. User / Siswa Protected Routes
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {

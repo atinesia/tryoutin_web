@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat Paket Tryout Baru - Admin Tryoutin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@section('title', 'AI Question Generator')
+@section('page_title', 'AI Question Generator (Groq Engine)')
+@push('styles')
     <style>
         body {
             background-color: #f4f7fa;
@@ -24,10 +20,8 @@
             color: #fff;
         }
     </style>
-</head>
-
-<body>
-
+@endpush
+@section('content')
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -62,9 +56,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-semibold">Harga Paket (Rp)</label>
-                                    <input type="number" name="price" class="form-control"
-                                        placeholder="0 untuk GRATIS" value="{{ old('price', 0) }}" required
-                                        min="0">
+                                    <input type="number" name="price" class="form-control" placeholder="0 untuk GRATIS"
+                                        value="{{ old('price', 0) }}" required min="0">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Deskripsi / Fasilitas Paket</label>
@@ -162,7 +155,9 @@
             </div>
         </div>
     </div>
+@endsection
 
+@push('scripts')
     <script>
         document.getElementById('examForm').addEventListener('submit', function() {
             let btn = document.getElementById('btnSubmit');
@@ -171,7 +166,4 @@
                 '<span class="spinner-border spinner-border-sm me-2"></span>Groq AI Sedang Membuat Soal (Mohon Tunggu)...';
         });
     </script>
-
-</body>
-
-</html>
+@endpush
